@@ -1,0 +1,4 @@
+flask
+Pillow
+Flask-SQLAlchemy
+flask-migrate

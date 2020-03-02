@@ -1,0 +1,29 @@
+version: '2'
+services:
+  compress_service:
+      build: compress_service
+      env_file:
+      - .env
+      ports:
+          - "${COMPRESS_SERVICE_PORT}:${COMPRESS_SERVICE_PORT}"
+
+  metadata_service:
+      build: metadata_service
+      env_file:
+      - .env
+      ports:
+        - "${METADATA_SERVICE_PORT}:${METADATA_SERVICE_PORT}"
+
+  upload_service:
+        build: upload_service
+        env_file:
+        - .env
+        ports:
+          - "${UPLOAD_SERVICE_PORT}:${UPLOAD_SERVICE_PORT}"
+
+  front_service:
+          build: front_service
+          env_file:
+          - .env
+          ports:
+            - "${FRONT_SERVICE_PORT}:${FRONT_SERVICE_PORT}"
