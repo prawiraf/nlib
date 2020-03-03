@@ -1,22 +1,18 @@
-from flask import Flask, request, jsonify
-from .models import MetaData
-
-import zlib
 import os
+
+from flask import Flask, request, jsonify, render_template
+from middleware import middleware
 
 app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def home():
-    if(request.method == "POST"):
-        try:
-            file_ = request.files['file'].read()
-            compressed = zlib.compress(file_)
-            return compressed
-        except:
-            return jsonify({"message": "plese input the file to be compressed"})
-    else:
-        return jsonify({"sanity": "checked"})
+    return render_template("index.html")
+
+@app.route('/upload', methods=["GET", "POST"])
+def home():
+    app.wsgi_app = middleware(app.wsgi_app)
+    return render_template("upload.html")
 
 # Or specify port manually:
 if __name__ == '__main__':
