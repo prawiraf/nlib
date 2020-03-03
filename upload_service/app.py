@@ -42,7 +42,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_name = f"{uuid.uuid1()}.{filename.split('.')[1]}"
-            file.save(os.path.join(app.root_path, 'upload_service/uploads/' + file_name))
+            file.save(os.path.join(app.root_path, 'uploads/' + file_name))
             try:
                 r = create_metadata(file, filename)
                 return jsonify(r)
