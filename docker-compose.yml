@@ -20,10 +20,3 @@ services:
         - .env
         ports:
           - "${UPLOAD_SERVICE_PORT}:${UPLOAD_SERVICE_PORT}"
-
-  front_service:
-          build: front_service
-          env_file:
-          - .env
-          ports:
-            - "${FRONT_SERVICE_PORT}:${FRONT_SERVICE_PORT}"

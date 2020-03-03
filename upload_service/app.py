@@ -7,13 +7,29 @@ from middleware import middleware
 
 
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip'}
 
 
 app = Flask(__name__)
 app.wsgi_app = middleware(app.wsgi_app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+def create_metadata(file, file_name):
+    url = f"{os.environ['INTERNAL_HOST']}:{os.environ['METADATA_SERVICE_PORT']}/metadata"
+    auth_token = request.headers.environ['HTTP_AUTHORIZATION']
+    cdn = f"{os.environ['INTERNAL_HOST']}:{os.environ['UPLOAD_SERVICE_PORT']}"
+
+    data = {
+        "name": file_name,
+        "author": "uploader",
+        "description": 
+            f"metadata of object uploaded at out service: link at: {cdn}",
+        "type_data": "uploaded file information"
+    }
+    r = requests.post(url, 
+            headers={'Authorization': auth_token})
+    return r
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -27,9 +43,13 @@ def upload_file():
             filename = secure_filename(file.filename)
             file_name = f"{uuid.uuid1()}.{filename.split('.')[1]}"
             file.save(os.path.join(app.root_path, 'uploads/' + file_name))
+            try:
+                r = create_metadata(file, filename)
+                return jsonify(r)
             # getting and posting meta data
-            img = Image.open(os.path.join(basedir, f'uploads/{file_name}'))
-            return jsonify({"url": f"/uploads/{file_name}"})
+            except Exception as e:
+                print(e)
+                return jsonify({"url": f"{request.host_url}uploads/{file_name}"})
     return jsonify({"sanity": "checked"})
 
 @app.route('/uploads/<filename>')
