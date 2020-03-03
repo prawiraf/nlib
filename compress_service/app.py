@@ -18,7 +18,7 @@ def home():
         try:
             file_ = request.files['file'].read()
             filename = f"{uuid.uuid1()}.zip"
-            with gzip.open(os.path.join(app.root_path, 'compressed/' + filename), 'wb') as f:
+            with gzip.open(os.path.join(basedir, 'compressed/' + filename), 'wb') as f:
                 f.write(file_)
             return jsonify({"url": f"/compressed/{filename}"})
         except Exception as e:
