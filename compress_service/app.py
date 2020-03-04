@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
+from middleware import middleware
 
 import zlib
 import os
@@ -10,6 +11,7 @@ app = Flask(__name__)
 
 COMPRESSED_FOLDER = 'compressed'
 app.config['COMPRESSED_FOLDER'] = COMPRESSED_FOLDER
+app.wsgi_app = middleware(app.wsgi_app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 @app.route('/', methods=["GET", "POST"])
